@@ -1,3 +1,5 @@
-//DEBE imprimir en pantalla la información de filtros.
+import { printFilters } from "./searcher.js";
 
-//DEBE imprimir en pantalla los productos, con su Título, descripción y precio en € y botón de añadir.
+document.addEventListener("DOMContentLoaded", () => {
+  printFilters();
+});
