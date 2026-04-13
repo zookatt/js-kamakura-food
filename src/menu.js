@@ -1,5 +1,6 @@
-import { printFilters } from "./searcher.js";
+import { printFilters, printPlates } from "./searcher.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   printFilters();
+  printPlates();
 });
