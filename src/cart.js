@@ -34,7 +34,7 @@ function paintCart() {
       `,
     )
     .join("");
- // 
+  //
   const cartTotal = document.getElementById("cart-total");
 
   const total = cart.reduce((acc, product) => {
@@ -108,6 +108,28 @@ export function initCart() {
     }
   });
   paintCart();
+
+  const proceedPayButton = document.getElementById("proceedPay-button");
+  const receiptContainer = document.getElementById("receipt-container");
+
+  proceedPayButton.addEventListener("click", () => {
+    paintReceipt();
+    receiptContainer.style.display = "block";
+  });
+
+  const closeReceiptButton = document.getElementById("close-receipt");
+
+  closeReceiptButton.addEventListener("click", () => {
+    receiptContainer.style.display = "none";
+  });
+  proceedPayButton.addEventListener("click", () => {
+    if (cart.length === 0) {
+      return;
+    }
+
+    paintReceipt();
+    receiptContainer.style.display = "block";
+  });
 }
 
 // El plato del carrito de compras lleva un contador, has de crear la función que recoja la cantidad
@@ -140,4 +162,29 @@ function restQuantity(productId) {
   }
 
   paintCart();
+}
+
+function paintReceipt() {
+  const receiptProduct = document.getElementById("receipt-product");
+  const receiptTotal = document.getElementById("receipt-total");
+
+  receiptProduct.innerHTML = cart
+    .map(
+      (product) => `
+        <div class="receipt-product">
+          <h3>${product.name}</h3>
+          <div class="receipt-price">
+            <p>Cantidad: ${product.quantity}</p>
+            <h5>${(product.price * product.quantity).toFixed(2)} €</h5>
+          </div>
+        </div>
+      `,
+    )
+    .join("");
+
+  const total = cart.reduce((acc, product) => {
+    return acc + product.price * product.quantity;
+  }, 0);
+
+  receiptTotal.textContent = `Total: ${total.toFixed(2)} €`;
 }
