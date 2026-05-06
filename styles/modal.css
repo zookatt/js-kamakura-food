@@ -1,0 +1,50 @@
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1001;
+}
+.modal.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal .modal-inner {
+  background: #fff;
+  padding: 2rem;
+  min-width: 300px;
+  transform: scale(0.9);
+  animation: anim-modal 0.4s forwards;
+}
+.modal-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+.modal-inner h2 {
+  color: black;
+}
+
+.modal-inner img {
+  width: 100px;
+}
+
+.close-modal {
+  background-color: black;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 90%;
+  color: #fff;
+  position: relative;
+  top: -270px;
+  left: 260px;
+}
+@keyframes anim-modal {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
