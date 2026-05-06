@@ -44,10 +44,12 @@ export function printPlates(productsArray) {
                     <p>${product.description}</p>
                     <div class="price-container">
                         <h5>${product.price}</h5>
-                        <button class="add-button">Añadir</button>
+                        <button class="add-button" data-id=${product.id}>Añadir</button>
                     </div>
 
                 </div>`,
     )
     .join("");
+
+  const addToCartButton = document.querySelectorAll(".add-button");
 }
