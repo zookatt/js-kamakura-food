@@ -19,7 +19,7 @@ export function printFilters() {
       const selectedFilter = button.dataset.filter;
 
       if (selectedFilter === "todos") {
-        printPlates();
+        printPlates(products);
         return;
       }
 

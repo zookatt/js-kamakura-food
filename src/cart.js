@@ -1,6 +1,7 @@
 import { products } from "../assets/data/data.js";
+import { clearReceipt, paintReceipt, showReceipt, hideReceipt } from "./receipt.js";
 
-const cart = [];
+export const cart = [];
 
 function updateCartTotal() {
   const cartTotal = document.getElementById("cart-total");
@@ -11,15 +12,7 @@ function updateCartTotal() {
   cartTotal.textContent = `Total: ${total.toFixed(2)} €`;
 }
 
-function clearReceipt() {
-  const receiptProduct = document.getElementById("receipt-product");
-  const receiptTotal = document.getElementById("receipt-total");
-
-  receiptProduct.innerHTML = "";
-  receiptTotal.textContent = "Total: 0.00 €";
-}
-
-function paintCart() {
+export function paintCart() {
   const cartProducts = document.getElementById("cart-products");
 
   if (cart.length === 0) {
@@ -50,13 +43,22 @@ function paintCart() {
   updateCartTotal();
 }
 
+export function clearCartAndReceipt() {
+  const cartContainer = document.getElementById("cart-container");
+
+  cart.length = 0;
+  paintCart();
+  clearReceipt();
+  hideReceipt();
+  cartContainer.style.display = "none";
+}
+
 export function initCart() {
   const cartButton = document.getElementById("cart");
   const cartContainer = document.getElementById("cart-container");
   const productsContainer = document.getElementById("products");
   const cartProductsContainer = document.getElementById("products-container");
   const proceedPayButton = document.getElementById("proceedPay-button");
-  const receiptContainer = document.getElementById("receipt-container");
   const closeReceiptButton = document.getElementById("close-receipt");
 
   cartButton.addEventListener("click", () => {
@@ -84,6 +86,7 @@ export function initCart() {
       ...productFound,
       quantity: 1,
     });
+
     paintCart();
   });
 
@@ -102,12 +105,12 @@ export function initCart() {
       return;
     }
 
-    const button = event.target.closest(".close-button");
-    if (!button) {
+    const removeButton = event.target.closest(".close-button");
+    if (!removeButton) {
       return;
     }
 
-    const productId = Number(button.dataset.id);
+    const productId = Number(removeButton.dataset.id);
     const index = cart.findIndex((product) => product.id === productId);
 
     if (index !== -1) {
@@ -121,12 +124,12 @@ export function initCart() {
       return;
     }
 
-    paintReceipt();
-    receiptContainer.style.display = "block";
+    paintReceipt(cart);
+    showReceipt();
   });
 
   closeReceiptButton.addEventListener("click", () => {
-    receiptContainer.style.display = "none";
+    hideReceipt();
   });
 
   paintCart();
@@ -158,40 +161,4 @@ function restQuantity(productId) {
   }
 
   paintCart();
-}
-
-function paintReceipt() {
-  const receiptProduct = document.getElementById("receipt-product");
-  const receiptTotal = document.getElementById("receipt-total");
-
-  receiptProduct.innerHTML = cart
-    .map(
-      (product) => `
-        <div class="receipt-product">
-          <h3>${product.name}</h3>
-          <div class="receipt-price">
-            <p>Cantidad: ${product.quantity}</p>
-            <h5>${(product.price * product.quantity).toFixed(2)} €</h5>
-          </div>
-        </div>
-      `,
-    )
-    .join("");
-
-  const total = cart.reduce((acc, product) => {
-    return acc + product.price * product.quantity;
-  }, 0);
-
-  receiptTotal.textContent = `Total: ${total.toFixed(2)} €`;
-}
-
-export function clearCartAndReceipt() {
-  const cartContainer = document.getElementById("cart-container");
-  const receiptContainer = document.getElementById("receipt-container");
-
-  cart.length = 0;
-  paintCart();
-  clearReceipt();
-  cartContainer.style.display = "none";
-  receiptContainer.style.display = "none";
 }
