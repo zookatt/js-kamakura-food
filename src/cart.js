@@ -2,17 +2,29 @@ import { products } from "../assets/data/data.js";
 
 const cart = [];
 
-// Has de crear una función que al hacer click en el botón "Añadir" de cada plato,
-// aparezca en el carrito dicho plato (tienes una ejemplo impreso estáticamente del
-// plato en el carrito, para que sepas como tiene que quedar). No puedes añadir dos
-// veces el mismo plato. Al hacer click en el botón "x" se debe eliminar el plato del
-// carrito de compras
+function updateCartTotal() {
+  const cartTotal = document.getElementById("cart-total");
+  const total = cart.reduce((acc, product) => {
+    return acc + product.price * product.quantity;
+  }, 0);
+
+  cartTotal.textContent = `Total: ${total.toFixed(2)} €`;
+}
+
+function clearReceipt() {
+  const receiptProduct = document.getElementById("receipt-product");
+  const receiptTotal = document.getElementById("receipt-total");
+
+  receiptProduct.innerHTML = "";
+  receiptTotal.textContent = "Total: 0.00 €";
+}
 
 function paintCart() {
   const cartProducts = document.getElementById("cart-products");
 
   if (cart.length === 0) {
     cartProducts.innerHTML = `<h3>Añade un plato a tu menú</h3>`;
+    updateCartTotal();
     return;
   }
 
@@ -26,30 +38,26 @@ function paintCart() {
             <h5>${product.price} €</h5>
           </div>
           <div class="quantity-container">
-  <button class="add-quantity" data-id="${product.id}">+</button>
-  <p class="quantity">${product.quantity}</p>
-  <button class="rest-quantity" data-id="${product.id}">-</button>
-</div>
+            <button class="add-quantity" data-id="${product.id}">+</button>
+            <p class="quantity">${product.quantity}</p>
+            <button class="rest-quantity" data-id="${product.id}">-</button>
+          </div>
         </div>
       `,
     )
     .join("");
-  //
-  const cartTotal = document.getElementById("cart-total");
 
-  const total = cart.reduce((acc, product) => {
-    return acc + product.price * product.quantity;
-  }, 0);
-
-  cartTotal.textContent = `Total: ${total.toFixed(2)} €`;
+  updateCartTotal();
 }
 
-//DEBE contener las funcionalidades del carrito de compras.
-//  crear una función que al hacer click en el carrito de compras, abra el elemento que lo contiene y al volver hacer click, lo cierre.
 export function initCart() {
   const cartButton = document.getElementById("cart");
   const cartContainer = document.getElementById("cart-container");
   const productsContainer = document.getElementById("products");
+  const cartProductsContainer = document.getElementById("products-container");
+  const proceedPayButton = document.getElementById("proceedPay-button");
+  const receiptContainer = document.getElementById("receipt-container");
+  const closeReceiptButton = document.getElementById("close-receipt");
 
   cartButton.addEventListener("click", () => {
     if (cartContainer.style.display === "flex") {
@@ -79,8 +87,6 @@ export function initCart() {
     paintCart();
   });
 
-  const cartProductsContainer = document.getElementById("products-container");
-
   cartProductsContainer.addEventListener("click", (event) => {
     const addButton = event.target.closest(".add-quantity");
     if (addButton) {
@@ -97,7 +103,9 @@ export function initCart() {
     }
 
     const button = event.target.closest(".close-button");
-    if (!button) return;
+    if (!button) {
+      return;
+    }
 
     const productId = Number(button.dataset.id);
     const index = cart.findIndex((product) => product.id === productId);
@@ -107,21 +115,7 @@ export function initCart() {
       paintCart();
     }
   });
-  paintCart();
 
-  const proceedPayButton = document.getElementById("proceedPay-button");
-  const receiptContainer = document.getElementById("receipt-container");
-
-  proceedPayButton.addEventListener("click", () => {
-    paintReceipt();
-    receiptContainer.style.display = "block";
-  });
-
-  const closeReceiptButton = document.getElementById("close-receipt");
-
-  closeReceiptButton.addEventListener("click", () => {
-    receiptContainer.style.display = "none";
-  });
   proceedPayButton.addEventListener("click", () => {
     if (cart.length === 0) {
       return;
@@ -130,12 +124,14 @@ export function initCart() {
     paintReceipt();
     receiptContainer.style.display = "block";
   });
-}
 
-// El plato del carrito de compras lleva un contador, has de crear la función que recoja la cantidad
-// escogida y haga el cálculo para obtener el subtotal por cada plato y luego que imprima el total
-// de todos los platos en pantalla, dentro del texto que dice "Total: €". Cuando el contador llegue
-// a 0 deberá desaparecer el plato del carrito de compras.
+  closeReceiptButton.addEventListener("click", () => {
+    receiptContainer.style.display = "none";
+  });
+
+  paintCart();
+  clearReceipt();
+}
 
 function addQuantity(productId) {
   const product = cart.find((item) => item.id === productId);
@@ -187,4 +183,15 @@ function paintReceipt() {
   }, 0);
 
   receiptTotal.textContent = `Total: ${total.toFixed(2)} €`;
+}
+
+export function clearCartAndReceipt() {
+  const cartContainer = document.getElementById("cart-container");
+  const receiptContainer = document.getElementById("receipt-container");
+
+  cart.length = 0;
+  paintCart();
+  clearReceipt();
+  cartContainer.style.display = "none";
+  receiptContainer.style.display = "none";
 }
